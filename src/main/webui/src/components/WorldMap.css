@@ -1,0 +1,125 @@
+.world-map {
+  width: 100%;
+  height: 500px;
+  position: relative;
+}
+
+.map-svg {
+  width: 100%;
+  height: 100%;
+}
+
+.continent {
+  fill: #2d3561;
+  stroke: #4a5a8a;
+  stroke-width: 1;
+  transition: fill 0.3s;
+}
+
+.continent:hover {
+  fill: #3d4571;
+}
+
+.route {
+  fill: none;
+  stroke-width: 2;
+  animation: dash 20s linear infinite;
+}
+
+.route-active {
+  stroke: var(--accent-blue);
+}
+
+.route-warning {
+  stroke: var(--accent-red);
+}
+
+.route-alternative {
+  stroke: var(--accent-green);
+}
+
+@keyframes dash {
+  to {
+    stroke-dashoffset: -100;
+  }
+}
+
+.marker {
+  transition: all 0.3s;
+  cursor: pointer;
+}
+
+.marker:hover {
+  r: 10;
+}
+
+.marker.factory {
+  fill: #ffd93d;
+  stroke: #fff;
+  stroke-width: 2;
+}
+
+.marker.warehouse {
+  fill: #4a9eff;
+  stroke: #fff;
+  stroke-width: 2;
+}
+
+.marker.port {
+  fill: #6bcf7f;
+  stroke: #fff;
+  stroke-width: 2;
+}
+
+.marker.issue {
+  fill: #ff6b6b;
+  stroke: #fff;
+  stroke-width: 2;
+  animation: pulse-marker 2s ease-in-out infinite;
+}
+
+@keyframes pulse-marker {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.2);
+  }
+}
+
+.marker-label {
+  font-size: 16px;
+  font-weight: bold;
+  text-anchor: middle;
+}
+
+.marker-label.alert {
+  fill: #ff6b6b;
+  animation: blink 1s ease-in-out infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.action-box {
+  fill: rgba(74, 158, 255, 0.1);
+  stroke: var(--accent-blue);
+  stroke-width: 2;
+}
+
+.action-box.success {
+  fill: rgba(107, 207, 127, 0.1);
+  stroke: var(--accent-green);
+}
+
+.action-text {
+  fill: var(--text-primary);
+  font-size: 11px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+/* Made with Bob */

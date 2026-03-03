@@ -1,0 +1,125 @@
+.shipment-tracker {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.tracker-header h3 {
+  color: var(--accent-blue);
+  margin-bottom: 0.5rem;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.tracker-subtitle {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.4;
+  margin-bottom: 1.5rem;
+}
+
+.live-shipments h4 {
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.shipment-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.shipment-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1rem;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  transition: all 0.3s;
+}
+
+.shipment-item:hover {
+  border-color: var(--accent-blue);
+  transform: translateX(4px);
+}
+
+.shipment-item.has-alert {
+  border-color: var(--accent-red);
+  background: rgba(255, 107, 107, 0.05);
+}
+
+.shipment-icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.shipment-info {
+  flex: 1;
+}
+
+.shipment-name {
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.shipment-details {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.5rem;
+}
+
+.badge {
+  padding: 0.25rem 0.75rem;
+  background: rgba(74, 158, 255, 0.2);
+  border: 1px solid var(--accent-blue);
+  border-radius: 12px;
+  font-size: 0.75rem;
+  color: var(--accent-blue);
+  font-weight: 500;
+}
+
+.badge.mode {
+  background: rgba(107, 207, 127, 0.2);
+  border-color: var(--accent-green);
+  color: var(--accent-green);
+}
+
+.shipment-alert {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  background: rgba(255, 107, 107, 0.1);
+  border: 1px solid var(--accent-red);
+  border-radius: 6px;
+  font-size: 0.85rem;
+  color: var(--accent-red);
+  margin-top: 0.5rem;
+  animation: alertPulse 2s ease-in-out infinite;
+}
+
+@keyframes alertPulse {
+  0%, 100% {
+    background: rgba(255, 107, 107, 0.1);
+  }
+  50% {
+    background: rgba(255, 107, 107, 0.2);
+  }
+}
+
+.alert-icon {
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+/* Made with Bob */

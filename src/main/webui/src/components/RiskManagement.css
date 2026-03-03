@@ -1,0 +1,153 @@
+.risk-management {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.risk-header h3 {
+  color: var(--accent-blue);
+  margin-bottom: 0.5rem;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.risk-subtitle {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.4;
+  margin-bottom: 1.5rem;
+}
+
+.risk-content h4 {
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.risk-map {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.risk-map-svg {
+  width: 100%;
+  max-width: 300px;
+  height: auto;
+}
+
+.risk-region {
+  transition: fill 0.3s;
+}
+
+.risk-region:hover {
+  fill: #2a2a3e;
+}
+
+.risk-hotspot {
+  animation: ripple 3s ease-out infinite;
+}
+
+.risk-hotspot.high {
+  fill: var(--accent-red);
+}
+
+@keyframes ripple {
+  0% {
+    opacity: 0.8;
+    transform: scale(0.8);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.5);
+  }
+}
+
+.risk-events {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.risk-event {
+  padding: 1rem;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  transition: all 0.3s;
+}
+
+.risk-event.severity-high {
+  border-color: var(--accent-red);
+  background: rgba(255, 107, 107, 0.05);
+}
+
+.risk-event.severity-medium {
+  border-color: var(--accent-yellow);
+  background: rgba(255, 217, 61, 0.05);
+}
+
+.risk-event.severity-low {
+  border-color: var(--accent-green);
+  background: rgba(107, 207, 127, 0.05);
+}
+
+.event-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.event-region {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.severity-badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.severity-badge.high {
+  background: rgba(255, 107, 107, 0.2);
+  border: 1px solid var(--accent-red);
+  color: var(--accent-red);
+}
+
+.severity-badge.medium {
+  background: rgba(255, 217, 61, 0.2);
+  border: 1px solid var(--accent-yellow);
+  color: var(--accent-yellow);
+}
+
+.severity-badge.low {
+  background: rgba(107, 207, 127, 0.2);
+  border: 1px solid var(--accent-green);
+  color: var(--accent-green);
+}
+
+.event-description {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.event-description strong {
+  color: var(--text-primary);
+}
+
+/* Made with Bob */

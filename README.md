@@ -1,6 +1,44 @@
 # Autonomous Supply Chain Agents
 
 ![Demo Scenarios](assets/demo_scenario.png)
+## 🚀 Quick Start
+
+### Start Both Backend and Frontend Automatically
+
+**macOS/Linux:**
+```bash
+./start-dev.sh
+```
+
+**Windows:**
+```bash
+start-dev.bat
+```
+
+This will automatically start:
+- 📦 Quarkus backend at `http://localhost:8080`
+- 🎨 React frontend at `http://localhost:3000`
+
+Press `Ctrl+C` (or close the terminal windows on Windows) to stop all services.
+
+### Manual Startup (Alternative)
+
+**Backend only:**
+```bash
+./mvnw quarkus:dev
+```
+
+**Frontend only:**
+```bash
+cd src/main/webui
+npm install
+npm run dev
+```
+
+See [src/main/webui/README.md](src/main/webui/README.md) for frontend details.
+
+---
+
 
 ## Human-in-the-Loop Demo Workflow
 
@@ -8,7 +46,7 @@
 ```bash
 curl -X POST http://localhost:8080/disruption \
      -H "Content-Type: text/plain" \
-     -d "Port Rotterdam strike. Shipment 402 reroute. Original cost: 100 EUR. Execute the 3-step workflow now."
+     -d "Port Rotterdam strike. Shipment 402 reroute. The original cost: 100 EUR. Execute the 3-step workflow now."
 ```
 
 **Expected Response:**
@@ -103,3 +141,52 @@ Compliance: You are demonstrating Article 14 (Human Oversight) of the EU AI Act.
 Safety: It proves that Agentic AI doesn't mean "giving up control."
 
 The "Wow" Moment: In your demo, you can show the Agent stuck in a "Pending" state, then hit the `/approve` endpoint, and watch the Agent conclude its final report to the user.
+# Autonomous Supply Chain Agents
+
+![Demo Scenarios](assets/demo_scenario.png)
+
+## 🎨 Frontend Application
+
+This project now includes a modern React-based frontend application that provides an interactive visualization of the autonomous supply chain agent in action.
+
+### Features
+
+- **Interactive World Map**: Real-time visualization of supply chain routes, warehouses, ports, and shipments
+- **Demand Forecasting Dashboard**: Charts showing predicted vs actual demand with inventory health monitoring
+- **Live Shipment Tracking**: Monitor shipments with real-time alerts for delays and disruptions
+- **Risk Management Panel**: Visual risk monitoring with agent-driven mitigation actions
+- **Supervisor Approval Interface**: Human-in-the-loop UI for approving agent-proposed actions
+
+### Running the Application
+
+Start the Quarkus application in dev mode (includes frontend):
+
+```bash
+./mvnw quarkus:dev
+```
+
+The application will be available at:
+- Frontend: `http://localhost:8080`
+- Backend API: `http://localhost:8080/q/dev`
+
+The Quinoa extension automatically:
+- Installs npm dependencies
+- Starts the Vite dev server
+- Enables hot-reload for both frontend and backend
+- Serves the built frontend in production mode
+
+### Frontend Development
+
+For frontend-only development with faster reload:
+
+```bash
+cd src/main/webui
+npm install
+npm run dev
+```
+
+This starts the Vite dev server at `http://localhost:3000` with proxy to the backend.
+
+See [src/main/webui/README.md](src/main/webui/README.md) for more details.
+
+---
