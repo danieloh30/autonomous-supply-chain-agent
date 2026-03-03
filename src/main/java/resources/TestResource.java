@@ -23,5 +23,3 @@ public class TestResource {
         return result;
     }
 }
-
-// Made with Bob
