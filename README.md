@@ -141,9 +141,6 @@ Compliance: You are demonstrating Article 14 (Human Oversight) of the EU AI Act.
 Safety: It proves that Agentic AI doesn't mean "giving up control."
 
 The "Wow" Moment: In your demo, you can show the Agent stuck in a "Pending" state, then hit the `/approve` endpoint, and watch the Agent conclude its final report to the user.
-# Autonomous Supply Chain Agents
-
-![Demo Scenarios](assets/demo_scenario.png)
 
 ## 🎨 Frontend Application
 
