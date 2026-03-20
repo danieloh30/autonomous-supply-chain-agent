@@ -1,18 +1,11 @@
 version: 2
 updates:
-  # Help Desk Agent
+  #  Main branch
   - package-ecosystem: maven
-    directory: "/help-desk-agent"
+    directory: "/"
     schedule:
       interval: daily
     open-pull-requests-limit: 10
-  # Help Desk MCP Server
-  - package-ecosystem: maven
-    directory: "/help-desk-mcp-server"
-    schedule:
-      interval: daily
-    open-pull-requests-limit: 10
-  # GitHub Actions
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
