@@ -158,14 +158,3 @@ Backend tests cover catalog pricing, the threshold boundary, validation, concurr
 The shipping REST client defaults to the app's HTTP port. `SHIPPING_API_URL` can override its base URL. Tests use port 8082 and a dummy model credential; they make no AI calls.
 
 See the [frontend guide](src/main/webui/README.md), [Quarkus REST guide](https://quarkus.io/guides/rest), and [REST client guide](https://quarkus.io/guides/rest-client).
-
-## Original demo concept
-
-<details>
-<summary>View the original concept illustration</summary>
-
-![Original supply chain agent concept illustration](assets/demo_scenario.png)
-
-This is the original concept artwork, not a screenshot of the current SPA. Its FastAPI, LangGraph, and partner-booking labels predate this implementation. The working demo uses Java, Quarkus, and LangChain4j with simulated shipping operations and a separate supervisor approval step.
-
-</details>
