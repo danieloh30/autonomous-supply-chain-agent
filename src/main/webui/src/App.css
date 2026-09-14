@@ -1,6 +1,10 @@
 .app {
   min-height: 100vh;
-  background: radial-gradient(ellipse at 85% 0%, #17304755, transparent 40%);
+  background: radial-gradient(
+    ellipse at 85% 0%,
+    var(--bg-tertiary),
+    transparent 40%
+  );
 }
 .skip-link {
   position: absolute;
@@ -19,6 +23,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
   gap: 1.5rem;
   border-bottom: 1px solid var(--border-color);
 }
@@ -264,14 +269,14 @@
 .primary-button {
   background: var(--accent-green);
   border: 1px solid var(--accent-green);
-  color: #08251d;
+  color: var(--button-text);
   font-weight: 650;
   padding: 0.75rem 1.1rem;
   border-radius: 7px;
   font-size: 0.8rem;
 }
 .primary-button:not(:disabled):hover {
-  background: #9fefd5;
+  background: var(--button-hover);
 }
 .workflow {
   list-style: none;

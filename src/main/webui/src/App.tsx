@@ -13,6 +13,7 @@ import ShipmentTracker from "./components/ShipmentTracker";
 const DemandForecasting = lazy(() => import("./components/DemandForecasting"));
 import RiskManagement from "./components/RiskManagement";
 import SupervisorPanel from "./components/SupervisorPanel";
+import ThemeToggle from "./components/ThemeToggle";
 import { api, DemoRun, formatCurrency, ProposedAction } from "./services/api";
 
 const scenario =
@@ -142,6 +143,7 @@ function App() {
           </div>
         </div>
         <div className="header-status">
+          <ThemeToggle />
           <span className="demo-badge">SIMULATION</span>
           <span className={`connection ${connection}`} role="status">
             <span aria-hidden="true">●</span>{" "}

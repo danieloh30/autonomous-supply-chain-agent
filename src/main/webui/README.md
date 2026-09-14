@@ -2,6 +2,8 @@
 
 React, TypeScript, Vite, and Recharts provide the interface for the Quarkus demo. The guided scenario compares routes without an LLM, and optional AI mode submits disruption details to the configured model. Human decisions stay visible in an inline queue and history.
 
+Use the **Dark / Light** selector in the header to change the background and dashboard colors. Dark is the default, and the browser remembers your selection across visits. Theme switching also works for the current session when browser storage is blocked.
+
 ## Development
 
 Use Node.js 22.12+ (or 20.19+) and npm. Start the backend from the repository root with `./mvnw quarkus:dev`, then:

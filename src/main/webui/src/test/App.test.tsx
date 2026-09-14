@@ -40,6 +40,7 @@ const run: DemoRun = {
 };
 
 beforeEach(() => {
+  window.localStorage.clear();
   vi.spyOn(api, "getActions").mockResolvedValue([]);
   vi.spyOn(api, "reportDisruption").mockResolvedValue(
     "Awaiting human approval",
@@ -52,6 +53,20 @@ beforeEach(() => {
 });
 
 describe("disruption workflow", () => {
+  it("changes the background without losing an unfinished disruption or submitting it", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+    await user.click(screen.getByRole("button", { name: "AI agent" }));
+    const input = screen.getByRole("textbox", { name: "Disruption details" });
+    await user.clear(input);
+    await user.type(input, "Port strike draft");
+    await user.click(screen.getByRole("button", { name: "Light" }));
+    expect(document.documentElement.dataset.theme).toBe("light");
+    expect(input).toHaveProperty("value", "Port strike draft");
+    expect(api.reportDisruption).not.toHaveBeenCalled();
+    expect(api.runDemo).not.toHaveBeenCalled();
+  });
+
   it("keeps typed details local until an explicit submission", async () => {
     const user = userEvent.setup();
     render(<App />);

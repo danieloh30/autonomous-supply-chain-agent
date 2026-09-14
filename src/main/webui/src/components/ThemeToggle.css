@@ -1,0 +1,33 @@
+.theme-switch {
+  display: inline-flex;
+  gap: 0.2rem;
+  flex-shrink: 0;
+  padding: 0.2rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--bg-primary);
+}
+
+.theme-switch button {
+  min-height: 40px;
+  padding: 0.45rem 0.65rem;
+  border: 1px solid transparent;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+}
+
+.theme-switch button[aria-pressed="true"] {
+  border-color: var(--border-color);
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+.theme-switch button:hover {
+  background: var(--bg-tertiary);
+}
+
+.theme-switch button span {
+  margin-right: 0.2rem;
+}

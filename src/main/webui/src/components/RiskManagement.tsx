@@ -31,8 +31,8 @@ const RiskManagement = () => {
             <path
               d="M 50 50 L 100 40 L 150 60 L 180 100 L 160 150 L 100 160 L 60 120 Z"
               className="risk-region"
-              fill="#1a1a2e"
-              stroke="#444"
+              fill="var(--map-land)"
+              stroke="var(--map-outline)"
               strokeWidth="2"
             />
 
@@ -64,11 +64,17 @@ const RiskManagement = () => {
               cx="120"
               cy="100"
               r="8"
-              fill="#ff6b6b"
-              stroke="#fff"
+              fill="var(--accent-red)"
+              stroke="var(--marker-outline)"
               strokeWidth="2"
             />
-            <text x="120" y="85" textAnchor="middle" fill="#fff" fontSize="24">
+            <text
+              x="120"
+              y="85"
+              textAnchor="middle"
+              fill="var(--text-primary)"
+              fontSize="24"
+            >
               ⚠
             </text>
           </svg>

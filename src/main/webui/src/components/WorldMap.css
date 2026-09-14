@@ -12,14 +12,14 @@
 }
 
 .continent {
-  fill: #2d3561;
-  stroke: #4a5a8a;
+  fill: var(--map-land);
+  stroke: var(--map-outline);
   stroke-width: 1;
   transition: fill 0.3s;
 }
 
 .continent:hover {
-  fill: #3d4571;
+  fill: var(--map-hover);
 }
 
 .route {
@@ -57,26 +57,26 @@
 }
 
 .marker.factory {
-  fill: #ffd93d;
-  stroke: #fff;
+  fill: var(--accent-yellow);
+  stroke: var(--marker-outline);
   stroke-width: 2;
 }
 
 .marker.warehouse {
-  fill: #4a9eff;
-  stroke: #fff;
+  fill: var(--accent-blue);
+  stroke: var(--marker-outline);
   stroke-width: 2;
 }
 
 .marker.port {
-  fill: #6bcf7f;
-  stroke: #fff;
+  fill: var(--accent-green);
+  stroke: var(--marker-outline);
   stroke-width: 2;
 }
 
 .marker.issue {
-  fill: #ff6b6b;
-  stroke: #fff;
+  fill: var(--accent-red);
+  stroke: var(--marker-outline);
   stroke-width: 2;
   animation: pulse-marker 2s ease-in-out infinite;
 }
@@ -100,7 +100,7 @@
 }
 
 .marker-label.alert {
-  fill: #ff6b6b;
+  fill: var(--accent-red);
   animation: blink 1s ease-in-out infinite;
 }
 

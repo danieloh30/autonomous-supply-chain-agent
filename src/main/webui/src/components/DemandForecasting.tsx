@@ -34,27 +34,31 @@ const DemandForecasting = () => {
           <h4>Predicted vs. actual demand (units)</h4>
           <ResponsiveContainer width="100%" height={220}>
             <LineChart data={demandData} accessibilityLayer>
-              <CartesianGrid strokeDasharray="3 3" stroke="#444" />
-              <XAxis dataKey="month" stroke="#aaa" />
-              <YAxis stroke="#aaa" />
+              <CartesianGrid
+                strokeDasharray="3 3"
+                stroke="var(--border-color)"
+              />
+              <XAxis dataKey="month" stroke="var(--text-secondary)" />
+              <YAxis stroke="var(--text-secondary)" />
               <Tooltip
                 contentStyle={{
-                  backgroundColor: "#1a1a2e",
-                  border: "1px solid #444",
+                  backgroundColor: "var(--bg-secondary)",
+                  border: "1px solid var(--border-color)",
+                  color: "var(--text-primary)",
                 }}
               />
               <Legend />
               <Line
                 type="monotone"
                 dataKey="predicted"
-                stroke="#8884d8"
+                stroke="var(--chart-predicted)"
                 strokeWidth={2}
                 name="Predicted"
               />
               <Line
                 type="monotone"
                 dataKey="actual"
-                stroke="#82ca9d"
+                stroke="var(--accent-green)"
                 strokeWidth={2}
                 name="Actual"
               />
@@ -79,16 +83,16 @@ const DemandForecasting = () => {
                   x2="100%"
                   y2="0%"
                 >
-                  <stop offset="0%" stopColor="#ff6b6b" />
-                  <stop offset="50%" stopColor="#ffd93d" />
-                  <stop offset="100%" stopColor="#6bcf7f" />
+                  <stop offset="0%" stopColor="var(--accent-red)" />
+                  <stop offset="50%" stopColor="var(--accent-yellow)" />
+                  <stop offset="100%" stopColor="var(--accent-green)" />
                 </linearGradient>
               </defs>
               {/* Background arc */}
               <path
                 d="M 30 100 A 70 70 0 0 1 170 100"
                 fill="none"
-                stroke="#333"
+                stroke="var(--border-color)"
                 strokeWidth="20"
               />
               {/* Colored arc */}
@@ -105,15 +109,15 @@ const DemandForecasting = () => {
                 y1="100"
                 x2={100 - 60 * Math.cos((Math.PI * inventoryHealth) / 100)}
                 y2={100 - 60 * Math.sin((Math.PI * inventoryHealth) / 100)}
-                stroke="#fff"
+                stroke="var(--text-primary)"
                 strokeWidth="3"
               />
-              <circle cx="100" cy="100" r="5" fill="#fff" />
+              <circle cx="100" cy="100" r="5" fill="var(--text-primary)" />
               <text
                 x="100"
                 y="115"
                 textAnchor="middle"
-                fill="#fff"
+                fill="var(--text-primary)"
                 fontSize="20"
                 fontWeight="bold"
               >

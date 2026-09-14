@@ -118,6 +118,7 @@ The key was neither printed nor written into the repository. This validates live
 - Pending proposals can become `APPROVED` or `REJECTED`. Repeating the same decision returns the existing result. A conflicting final decision returns **409**; an unknown proposal returns **404**.
 - `GET /supervisor/pending` returns pending proposals only. `GET /supervisor/actions` includes history, newest proposals first. Both return immutable snapshots.
 - The SPA refreshes the queue every five seconds, cancels obsolete reads, disables duplicate submissions/decisions, and displays connection or operation failures.
+- The **Dark / Light** selector in the header switches the entire dashboard theme, including charts and the map, and remembers the choice in the browser. Dark is the default.
 - Map, demand, shipment, and risk panels are explicitly labeled illustrative. The approval queue reflects backend state.
 
 **Demo boundaries:** shipping operations are simulated; no real route is changed. Proposals and decisions are held in memory and reset on backend restart. This is an unauthenticated local demonstration, not a production approval system or a certification of regulatory compliance. An external shipping integration would need its own authoritative prices and shipment context; the guardrail here intentionally uses the local demo catalog.

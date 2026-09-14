@@ -16,6 +16,35 @@
   --accent-yellow: #f7cf7d;
   --accent-red: #ff9a9a;
   --border-color: #2a3a51;
+  --button-text: #08251d;
+  --button-hover: #9fefd5;
+  --chart-predicted: #b6a8ff;
+  --map-land: #2d3561;
+  --map-outline: #4a5a8a;
+  --map-hover: #3d4571;
+  --marker-outline: #ffffff;
+  --panel-shadow: 0 4px 12px rgb(0 0 0 / 30%);
+}
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg-primary: #f3f6fb;
+  --bg-secondary: #ffffff;
+  --bg-tertiary: #eaf0f8;
+  --text-primary: #152338;
+  --text-secondary: #465971;
+  --accent-blue: #1d57a0;
+  --accent-green: #116b50;
+  --accent-yellow: #825500;
+  --accent-red: #b02c3a;
+  --border-color: #b5c2d3;
+  --button-text: #ffffff;
+  --button-hover: #09543d;
+  --chart-predicted: #6a42bb;
+  --map-land: #dce5f1;
+  --map-outline: #9aadc5;
+  --map-hover: #c3d3e8;
+  --marker-outline: #ffffff;
+  --panel-shadow: 0 4px 12px rgb(24 45 72 / 8%);
 }
 * {
   margin: 0;
