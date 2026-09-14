@@ -1,189 +1,127 @@
-# Autonomous Supply Chain Agents
+# Autonomous Supply Chain Agent
 
-![Demo Scenarios](assets/demo_scenario.png)
-## 🚀 Quick Start
+A Quarkus and React demo of disruption response with human oversight. Compare shipping routes, inspect the carbon and cost tradeoffs, and approve or reject the proposed reroute from one control tower.
 
-### Start Both Backend and Frontend Automatically
+![Demo scenarios](assets/demo_scenario.png)
 
-**macOS/Linux:**
+The guided scenario works without an AI credential. Optional AI mode uses LangChain4j tools against the same fictional shipment and route catalog.
+
+## Quick start
+
+Prerequisites: **JDK 25**, **Node.js 22.12+** (or 20.19+), and npm. The Node requirement follows the [Vite 7 migration guide](https://v7.vite.dev/guide/migration).
+
 ```bash
 ./start-dev.sh
 ```
 
-**Windows:**
+On Windows, run `start-dev.bat`. Open **http://localhost:3000** for the SPA. The backend runs at **http://localhost:8080**; its development console is at `/q/dev-ui`.
+
+For manual startup, run these in separate terminals:
+
 ```bash
-start-dev.bat
-```
-
-This will automatically start:
-- 📦 Quarkus backend at `http://localhost:8080`
-- 🎨 React frontend at `http://localhost:3000`
-
-Press `Ctrl+C` (or close the terminal windows on Windows) to stop all services.
-
-### Manual Startup (Alternative)
-
-**Backend only:**
-```bash
+# Repository root
 ./mvnw quarkus:dev
 ```
 
-**Frontend only:**
 ```bash
 cd src/main/webui
-npm install
+npm ci
 npm run dev
 ```
 
-See [src/main/webui/README.md](src/main/webui/README.md) for frontend details.
+Vite proxies `/demo`, `/disruption`, and `/supervisor` to port 8080. The project uses separate Quarkus and Vite dev servers; it does not use Quinoa.
+
+To enable **AI agent** mode, set `OPENAI_API_KEY` in the backend environment before starting it. `OPENAI_MODEL` optionally overrides the existing `gpt-4o-mini` default. Never commit credentials. Without a key, the guided demo still works and `/disruption` returns HTTP 503 with configuration guidance.
 
 ---
 
 
 ## Human-in-the-Loop Demo Workflow
 
-### Step 1: Trigger a Disruption via AI Agent
-```bash
-curl -X POST http://localhost:8080/disruption \
-     -H "Content-Type: text/plain" \
-     -d "Port Rotterdam strike. Shipment 402 reroute. The original cost: 100 EUR. Execute the 3-step workflow now."
-```
+1. Open the SPA and select **Guided demo**.
+2. Click **Run demo**. The server compares all three routes for shipment **402**, Rotterdam → Berlin, with an original cost of **€100**.
+3. Review the route comparison and the proposal in the **Supervisor queue**.
+4. Approve or reject it. The proposal leaves the pending queue and appears in **Decision history**. Run another scenario to demonstrate the other decision.
 
-**Expected Response:**
-```
-The reroute proposal has been executed, but it requires human approval due to the extra cost of €450.
-The proposal ID is 4c22539d-74db-4ea2-9884-2ce2fff2693b.
-```
+| Route | Transport | Cost | Extra cost | CO₂ | Arrival |
+| --- | --- | ---: | ---: | ---: | --- |
+| Rail-01 | Rail | €450 | €350 | 0.3 t | In 2 days |
+| Truck-99 | Truck | €380 | €280 | 1.5 t | In 1 day |
+| Barge-42 | Barge | €420 | €320 | **0.2 t** | In 3 days |
 
-The AI agent automatically:
-1. Finds alternative routes
-2. Checks carbon impact
-3. Executes the route change (triggers approval for cost > €200)
+The guided scenario selects **Barge-42** because it has the lowest carbon impact, accepting its later arrival. The **€320 additional cost exceeds the €200 approval threshold**, so it remains pending. The server calculates that cost from the trusted catalog; the model cannot pass in an arbitrary price to bypass approval.
 
----
+In **AI agent** mode, edit the disruption details and click **Analyze with AI**. Typing never sends a request. The agent finds routes, checks the carbon impact of every alternative, and submits a proposal. Its wording and tool-call behavior can vary with the model. Human decisions are recorded separately; the agent does not automatically resume after approval.
 
-### Step 2: Check Pending Actions
-```bash
-curl -X GET http://localhost:8080/supervisor/pending | jq
-```
-
-**Expected Response:**
-```json
-[{
-  "id": "478fd16a-e11e-4248-903d-f9b6c80f20fa",
-  "routeId": "Rail-01",
-  "reasoning": "Test route change due to Port of Rotterdam strike - requires approval",
-  "extraCost": 550.0,
-  "status": "PENDING"
-}]
-```
-
-Copy the `id` value for the next step.
-
----
-
-### Step 3: Approve the Pending Action
-```bash
-curl -X POST http://localhost:8080/supervisor/approve/478fd16a-e11e-4248-903d-f9b6c80f20fa
-```
-*(Replace the ID with the actual ID from Step 2)*
-
-**Expected Response:**
-```
-Route Rail-01 has been officially confirmed by human supervisor.
-```
-
----
-
-**Why AI agent may not work reliably:**
-- Local LLMs (qwen2.5-coder, llama3.2) struggle with precise tool calling
-- May not pass correct parameter types (strings vs numbers)
-- May describe actions instead of executing them
-- Inconsistent behavior across runs
-
-**Recommendation:** Use the test endpoint (Step 1 above) for reliable demos and presentations.
-
-## The Expected "Agentic" Logic (Visible in Logs):
-
-When you trigger the disruption, the AI agent executes this workflow:
-
-1. **Tool Call #1**: `findAlternativeRoutes("Rotterdam", "destination")`
-   - **API Result**: Returns available routes:
-     ```
-     [Route Rail-01 via Rail (Arriving: 2026-06-15T10:00:00Z, Cost: €450.00),
-      Route Truck-99 via Truck (Arriving: 2026-06-14T18:00:00Z, Cost: €380.00),
-      Route Barge-42 via Barge (Arriving: 2026-06-16T12:00:00Z, Cost: €420.00)]
-     ```
-
-2. **Tool Call #2**: `getRouteCarbonImpact("Rail-01")`
-   - **API Result**: Returns `0.3` (CO2 tons)
-   - Agent selects Rail-01 as the greenest option
-
-3. **Tool Call #3**: `executeRouteChange("Rail-01", "Green alternative for strike", 350.0)`
-   - Calculates: extraCost = €450 (new) - €100 (original) = €350
-   - Since €350 > €200 threshold, returns:
-     ```
-     ACTION_REQUIRED: This change costs €350.0.
-     Proposal ID: abc-123. Waiting for human supervisor.
-     ```
-
-4. **Human Approval**: Supervisor reviews and approves via `/supervisor/approve/{id}`
-   - Status changes from PENDING → APPROVED
-   - Route change is officially confirmed
-
-**Key Point**: The AI agent autonomously finds and evaluates alternatives, but **human oversight is required** for high-cost decisions (>€200), demonstrating EU AI Act Article 14 compliance.
-
-## Why this matters for Amsterdam 2026:
-By using Java Records and MicroProfile, you are showing the audience that AI doesn't require a "rip and replace" of their enterprise stack. You are simply giving your existing, high-performance Java services a "voice" and a "brain."
-
-Compliance: You are demonstrating Article 14 (Human Oversight) of the EU AI Act.
-
-Safety: It proves that Agentic AI doesn't mean "giving up control."
-
-The "Wow" Moment: In your demo, you can show the Agent stuck in a "Pending" state, then hit the `/approve` endpoint, and watch the Agent conclude its final report to the user.
-
-## 🎨 Frontend Application
-
-This project now includes a modern React-based frontend application that provides an interactive visualization of the autonomous supply chain agent in action.
-
-### Features
-
-- **Interactive World Map**: Real-time visualization of supply chain routes, warehouses, ports, and shipments
-- **Demand Forecasting Dashboard**: Charts showing predicted vs actual demand with inventory health monitoring
-- **Live Shipment Tracking**: Monitor shipments with real-time alerts for delays and disruptions
-- **Risk Management Panel**: Visual risk monitoring with agent-driven mitigation actions
-- **Supervisor Approval Interface**: Human-in-the-loop UI for approving agent-proposed actions
-
-### Running the Application
-
-Start the Quarkus application in dev mode (includes frontend):
+### Command-line demonstration
 
 ```bash
-./mvnw quarkus:dev
+# Compare routes and create the repeatable proposal (no LLM call)
+curl -fsS -X POST http://localhost:8080/demo/disruption | jq
+
+# List only proposals still awaiting review
+curl -fsS http://localhost:8080/supervisor/pending | jq
+
+# Replace PROPOSAL_ID with the action.id returned above
+curl -fsS -X POST http://localhost:8080/supervisor/approve/PROPOSAL_ID | jq
+# Or reject it:
+curl -fsS -X POST http://localhost:8080/supervisor/reject/PROPOSAL_ID | jq
+
+# View pending proposals and final decisions
+curl -fsS http://localhost:8080/supervisor/actions | jq
 ```
 
-The application will be available at:
-- Frontend: `http://localhost:8080`
-- Backend API: `http://localhost:8080/q/dev`
-
-The Quinoa extension automatically:
-- Installs npm dependencies
-- Starts the Vite dev server
-- Enables hot-reload for both frontend and backend
-- Serves the built frontend in production mode
-
-### Frontend Development
-
-For frontend-only development with faster reload:
+For AI analysis:
 
 ```bash
+curl -fsS -X POST http://localhost:8080/disruption \
+  -H 'Content-Type: text/plain' \
+  -d 'Port Rotterdam strike. Reroute shipment 402 to Berlin. Compare all routes and propose the lowest-carbon alternative.'
+```
+
+## Application behavior
+
+- Approval is required when additional cost is **strictly greater than €200**. Lower-cost proposals use `AUTO_APPROVED`; all three seeded alternatives require review.
+- Pending proposals can become `APPROVED` or `REJECTED`. Repeating the same decision returns the existing result. A conflicting final decision returns **409**; an unknown proposal returns **404**.
+- `GET /supervisor/pending` returns pending proposals only. `GET /supervisor/actions` includes history, newest proposals first. Both return immutable snapshots.
+- The SPA refreshes the queue every five seconds, cancels obsolete reads, disables duplicate submissions/decisions, and displays connection or operation failures.
+- Map, demand, shipment, and risk panels are explicitly labeled illustrative. The approval queue reflects backend state.
+
+**Demo boundaries:** shipping operations are simulated; no real route is changed. Proposals and decisions are held in memory and reset on backend restart. This is an unauthenticated local demonstration, not a production approval system or a certification of regulatory compliance. An external shipping integration would need its own authoritative prices and shipment context; the guardrail here intentionally uses the local demo catalog.
+
+## Build and test
+
+```bash
+# Frontend tests and production assets
 cd src/main/webui
-npm install
-npm run dev
+npm ci
+npm test
+npm run build
+cd ../../..
+
+# Backend tests and packaged application
+./mvnw verify
+java -jar target/quarkus-app/quarkus-run.jar
 ```
 
-This starts the Vite dev server at `http://localhost:3000` with proxy to the backend.
+After building both, open **http://localhost:8080** for the packaged SPA and API. Vite writes generated assets to `src/main/resources/META-INF/resources/`, which Quarkus packages as static resources. Build the frontend **before** packaging the backend. Dependencies and generated assets are ignored by Git. CI builds and tests both applications in this order.
 
-See [src/main/webui/README.md](src/main/webui/README.md) for more details.
+Backend tests cover catalog pricing, the threshold boundary, validation, concurrent decisions, and the HTTP demo lifecycle. SPA tests cover explicit submission, duplicate-click prevention, route comparison, approval/history, error recovery, and polling cleanup.
 
----
+## Endpoints
+
+| Method | Path | Result |
+| --- | --- | --- |
+| POST | `/demo/disruption` | Route comparison and pending proposal as JSON |
+| POST | `/disruption` | AI response as text; expects 1–4000 characters of `text/plain` |
+| GET | `/supervisor/pending` | Pending proposals as JSON |
+| GET | `/supervisor/actions` | All proposals and decisions as JSON |
+| POST | `/supervisor/approve/{id}` | Approved proposal as JSON |
+| POST | `/supervisor/reject/{id}` | Rejected proposal as JSON |
+| GET | `/v1/logistics/routes` | Fictional route catalog |
+| GET | `/v1/logistics/impact?routeId=…` | Carbon estimate for a known route; 404 otherwise |
+| POST | `/test/create-pending-action` | Legacy shortcut: Rail-01 proposal, €350 extra, text response |
+
+The shipping REST client defaults to the app's HTTP port. `SHIPPING_API_URL` can override its base URL. Tests use port 8082 and a dummy model credential; they make no AI calls.
+
+See the [frontend guide](src/main/webui/README.md), [Quarkus REST guide](https://quarkus.io/guides/rest), and [REST client guide](https://quarkus.io/guides/rest-client).

@@ -109,7 +109,8 @@
 }
 
 @keyframes alertPulse {
-  0%, 100% {
+  0%,
+  100% {
     background: rgba(255, 107, 107, 0.1);
   }
   50% {
@@ -123,3 +124,19 @@
 }
 
 /* Made with Bob */
+
+.tracker-header h3 {
+  color: var(--text-primary);
+  font-size: 1rem;
+}
+.shipment-item {
+  padding: 0.8rem;
+  gap: 0.65rem;
+}
+.shipment-name {
+  font-size: 0.8rem;
+}
+.shipment-alert {
+  font-size: 0.7rem;
+  animation: none;
+}

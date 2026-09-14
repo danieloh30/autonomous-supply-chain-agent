@@ -5,50 +5,45 @@ import dev.langchain4j.agent.tool.Tool;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import model.ProposedAction;
-
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
+import model.RouteOption;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
+import services.ActionService;
+
+import java.util.List;
 
 @ApplicationScoped
 public class LogisticsTools {
-
-    // Simple in-memory store for the demo; use Redis/DB for production
-    private final Map<String, ProposedAction> pendingActions = new ConcurrentHashMap<>();
-
     @Inject
     @RestClient
-    ShippingServiceApi shippingApi; // Standard MicroProfile Rest Client
+    ShippingServiceApi shippingApi;
 
-    @Tool("Find alternative shipping routes. Returns list of available routes with their costs. You MUST call this first.")
+    @Inject
+    ActionService actions;
+
+    @Tool("Find available routes and prices for demo shipment 402. Call this first.")
     public String findAlternativeRoutes(String currentPort, String destination) {
-        // This calls your existing enterprise REST API
-        var routes = shippingApi.getAvailableRoutes(currentPort, destination);
-        return "Available alternatives: " + routes.toString();
+        return "Available alternatives: " + shippingApi.getAvailableRoutes(currentPort, destination);
     }
 
-    @Tool("Get carbon impact for a route. Returns CO2 tons as a number. Call this after findAlternativeRoutes.")
+    @Tool("Get CO2 tons for a route. Check EVERY available route before selecting the lowest-carbon option.")
     public double getRouteCarbonImpact(String routeId) {
         return shippingApi.getCarbonMetrics(routeId).co2Tons();
     }
 
-    @Tool("EXECUTE the route change NOW. This is the final REQUIRED step. Parameters: routeId (string like 'Rail-01'), reasoning (string), extraCost (number only, no currency). If extraCost > 200, returns ACTION_REQUIRED message. You MUST call this tool to complete the task.")
-    public String executeRouteChange(String routeId, String reasoning, double extraCost) {
-        if (extraCost > 200.0) {
-            ProposedAction action = ProposedAction.create(routeId, reasoning, extraCost);
-            pendingActions.put(action.id(), action);
-            
-            return "ACTION_REQUIRED: This change costs €" + extraCost + 
-                   ". Proposal ID: " + action.id() + ". Waiting for human supervisor.";
+    @Tool("Submit the selected route and reasoning for demo shipment 402. REQUIRED final step. The server calculates extra cost from trusted prices. Above EUR 200 extra, returns ACTION_REQUIRED and waits for human approval. No real shipment is changed.")
+    public String executeRouteChange(String routeId, String reasoning) {
+        var action = actions.propose(routeId, reasoning);
+        if (action.status() == ProposedAction.Status.PENDING) {
+            return "ACTION_REQUIRED: Additional cost EUR " + action.extraCost()
+                    + ". Proposal ID: " + action.id() + ". Awaiting human approval. No shipment has been changed.";
         }
-        
-        // If low cost, proceed immediately
-        return "SUCCESS: Route " + routeId + " updated automatically.";
-    }
-    
-    public Map<String, ProposedAction> getPendingActions() {
-        return pendingActions;
+        return "SIMULATED: Route " + routeId + " automatically approved. Proposal ID: " + action.id();
     }
 
+    public List<RouteOption> evaluateRoutes() {
+        return shippingApi.getAvailableRoutes("Rotterdam", "Berlin").stream()
+                .map(route -> new RouteOption(route.routeId(), route.mode(), route.eta(), route.baseCost(),
+                        getRouteCarbonImpact(route.routeId())))
+                .toList();
+    }
 }

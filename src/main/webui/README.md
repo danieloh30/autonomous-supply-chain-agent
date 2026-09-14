@@ -1,101 +1,35 @@
-# Autonomous Supply Chain Agent - Frontend
+# Supply chain control tower SPA
 
-This is the frontend application for the Autonomous Supply Chain Agent demo, built with React, TypeScript, and Vite.
-
-## Features
-
-- **Real-time Supply Chain Visualization**: Interactive world map showing supply chain routes, warehouses, and shipments
-- **Demand Forecasting Dashboard**: Charts showing predicted vs actual demand with inventory health monitoring
-- **Shipment Tracking**: Live shipment status with alerts for delays and issues
-- **Risk Management**: Visual risk monitoring with agent-driven mitigation actions
-- **Supervisor Approval Panel**: Human-in-the-loop interface for approving agent-proposed actions
-
-## Technology Stack
-
-- **React 18**: UI framework
-- **TypeScript**: Type-safe development
-- **Vite**: Fast build tool and dev server
-- **Recharts**: Data visualization library
-- **Quarkus Quinoa**: Integration with Quarkus backend
+React, TypeScript, Vite, and Recharts provide the interface for the Quarkus demo. The guided scenario compares routes without an LLM, and optional AI mode submits disruption details to the configured model. Human decisions stay visible in an inline queue and history.
 
 ## Development
 
-### Prerequisites
-
-- Node.js 20.x or higher
-- npm
-
-### Install Dependencies
+Use Node.js 22.12+ (or 20.19+) and npm. Start the backend from the repository root with `./mvnw quarkus:dev`, then:
 
 ```bash
-npm install
-```
-
-### Run Development Server
-
-```bash
+cd src/main/webui
+npm ci
 npm run dev
 ```
 
-The dev server will start at `http://localhost:3000` with proxy to the Quarkus backend at `http://localhost:8080`.
+Open http://localhost:3000. Vite forwards `/demo`, `/disruption`, and `/supervisor` to http://localhost:8080. Port 3000 is strict: startup fails rather than silently selecting a different URL.
 
-### Build for Production
+## Validation and packaging
 
 ```bash
+npm test
 npm run build
 ```
 
-The build output will be placed in `dist/` directory, which Quinoa will serve from the Quarkus application.
+Vitest and Testing Library exercise the form, request lifecycle, connection failures, and approval decisions. The build runs TypeScript checks and emits production files into `../resources/META-INF/resources/`. Run `./mvnw verify` at the repository root **after** the UI build to package those assets with Quarkus. The packaged app serves both the SPA and API on port 8080. There is no Quinoa dependency.
 
-## Integration with Quarkus
+The chart is loaded in a separate JavaScript chunk. Styles include narrow-screen layouts, visible keyboard focus, accessible form labels and status messages, and reduced-motion support.
 
-This frontend is integrated with the Quarkus backend using the Quinoa extension. When you run the Quarkus application in dev mode:
+## Data sources
 
-```bash
-./mvnw quarkus:dev
-```
+- The supervisor queue and history use backend state, refreshed every five seconds.
+- The guided demo response supplies the route comparison and selected proposal.
+- Map, demand, risk, and shipment context are illustrative sample data, labeled accordingly.
+- All shipping operations are simulated. Proposal state resets when the backend restarts.
 
-Quinoa will automatically:
-1. Install npm dependencies
-2. Start the Vite dev server
-3. Proxy frontend requests to the backend
-4. Enable hot-reload for both frontend and backend
-
-## API Endpoints
-
-The frontend communicates with these backend endpoints:
-
-- `POST /disruption` - Report supply chain disruptions
-- `GET /supervisor/pending` - Get pending supervisor actions
-- `POST /supervisor/approve/{id}` - Approve an action
-- `POST /supervisor/reject/{id}` - Reject an action
-
-## Project Structure
-
-```
-src/main/webui/
-├── src/
-│   ├── components/          # React components
-│   │   ├── WorldMap.tsx     # Interactive supply chain map
-│   │   ├── ShipmentTracker.tsx
-│   │   ├── DemandForecasting.tsx
-│   │   ├── RiskManagement.tsx
-│   │   └── SupervisorPanel.tsx
-│   ├── services/
-│   │   └── api.ts           # API service layer
-│   ├── App.tsx              # Main application component
-│   ├── main.tsx             # Application entry point
-│   └── index.css            # Global styles
-├── index.html               # HTML template
-├── package.json             # Dependencies
-├── tsconfig.json            # TypeScript configuration
-└── vite.config.ts           # Vite configuration
-```
-
-## Styling
-
-The application uses a dark theme with a blue/green color scheme inspired by the demo image. All components are styled with CSS modules for maintainability.
-
-## License
-
-This project is part of the Autonomous Supply Chain Agent demo.
+See the [repository README](../../../README.md) for the complete demo and endpoint reference.

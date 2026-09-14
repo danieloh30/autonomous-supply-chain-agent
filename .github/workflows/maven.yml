@@ -35,8 +35,23 @@ jobs:
           java-version: '25'
           distribution: 'temurin'
           cache: 'maven'
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: src/main/webui/package-lock.json
+      - name: Install frontend dependencies
+        working-directory: src/main/webui
+        run: npm ci
+      - name: Test frontend
+        working-directory: src/main/webui
+        run: npm test
+      - name: Build frontend assets
+        working-directory: src/main/webui
+        run: npm run build
       - name: Maven Build
-        run: ./mvnw -B clean package -Dquarkus.http.host=0.0.0.0 -DskipTests=true
+        run: ./mvnw -B verify -Dquarkus.http.host=0.0.0.0
 
   dependabot:
     needs: build

@@ -1,17 +1,33 @@
+export interface ProposedAction {
+  id: string;
+  routeId: string;
+  reasoning: string;
+  extraCost: number;
+  status: "PENDING" | "APPROVED" | "REJECTED" | "AUTO_APPROVED";
+  createdAt: string;
+}
+
+export interface RouteOption {
+  routeId: string;
+  mode: string;
+  eta: string;
+  baseCost: number;
+  co2Tons: number;
+}
+
+export interface DemoRun {
+  shipmentId: string;
+  originalCost: number;
+  alternatives: RouteOption[];
+  action: ProposedAction;
+}
+
 export interface Shipment {
   id: string;
   name: string;
   status: string;
   mode: string;
   alert?: string;
-}
-
-export interface ProposedAction {
-  id: string;
-  routeId: string;
-  reasoning: string;
-  extraCost: number;
-  status: 'PENDING' | 'APPROVED' | 'REJECTED';
 }
 
 export interface DemandData {
@@ -22,77 +38,104 @@ export interface DemandData {
 
 export interface RiskEvent {
   region: string;
-  severity: 'high' | 'medium' | 'low';
+  severity: "high" | "medium" | "low";
   description: string;
 }
 
-const API_BASE = '';
+async function request(
+  path: string,
+  options: RequestInit = {},
+): Promise<Response> {
+  const response = await fetch(path, options);
+  if (!response.ok) {
+    const messages: Record<number, string> = {
+      400: "Check the disruption details and try again.",
+      404: "This proposal no longer exists. The approval queue has been refreshed.",
+      409: "This proposal already has a different decision. The approval queue has been refreshed.",
+      503: "AI analysis is unavailable. Configure OPENAI_API_KEY on the backend, or use the guided demo.",
+    };
+    throw new Error(
+      messages[response.status] ??
+        "The request failed. Check the backend connection before trying again.",
+    );
+  }
+  return response;
+}
 
 export const api = {
-  // Get pending supervisor actions
-  async getPendingActions(): Promise<ProposedAction[]> {
-    const response = await fetch(`${API_BASE}/supervisor/pending`);
-    if (!response.ok) throw new Error('Failed to fetch pending actions');
-    return response.json();
+  async getActions(signal?: AbortSignal): Promise<ProposedAction[]> {
+    return (await request("/supervisor/actions", { signal })).json();
   },
-
-  // Approve an action
-  async approveAction(id: string): Promise<string> {
-    const response = await fetch(`${API_BASE}/supervisor/approve/${id}`, {
-      method: 'POST',
-    });
-    if (!response.ok) throw new Error('Failed to approve action');
-    return response.text();
+  async decideAction(
+    id: string,
+    decision: "approve" | "reject",
+  ): Promise<ProposedAction> {
+    return (
+      await request(`/supervisor/${decision}/${encodeURIComponent(id)}`, {
+        method: "POST",
+      })
+    ).json();
   },
-
-  // Reject an action
-  async rejectAction(id: string): Promise<string> {
-    const response = await fetch(`${API_BASE}/supervisor/reject/${id}`, {
-      method: 'POST',
-    });
-    if (!response.ok) throw new Error('Failed to reject action');
-    return response.text();
+  async runDemo(): Promise<DemoRun> {
+    return (await request("/demo/disruption", { method: "POST" })).json();
   },
-
-  // Report a disruption
   async reportDisruption(issue: string): Promise<string> {
-    const response = await fetch(`${API_BASE}/disruption`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'text/plain',
-      },
-      body: issue,
-    });
-    if (!response.ok) throw new Error('Failed to report disruption');
-    return response.text();
+    return (
+      await request("/disruption", {
+        method: "POST",
+        headers: { "Content-Type": "text/plain" },
+        body: issue,
+      })
+    ).text();
   },
-
-  // Mock data for demo purposes
   getMockShipments(): Shipment[] {
     return [
-      { id: '1', name: 'Shipment 1', status: 'Container', mode: 'Mob' },
-      { id: '2', name: 'Shipment 2', status: 'Privay', mode: '' },
-      { id: '3', name: 'Shipment 3', status: 'Container', mode: 'Mob', alert: 'Delay Detected: Port Congestion' },
-      { id: '4', name: 'Shipment 4', status: 'Container', mode: 'Mob' },
+      {
+        id: "402",
+        name: "Shipment 402 · Rotterdam → Berlin",
+        status: "Disrupted",
+        mode: "Sea",
+        alert: "Port strike · alternative route needed",
+      },
+      {
+        id: "403",
+        name: "Shipment 403 · New York → Antwerp",
+        status: "In transit",
+        mode: "Sea",
+      },
+      {
+        id: "404",
+        name: "Shipment 404 · Shanghai → Sydney",
+        status: "On schedule",
+        mode: "Sea",
+      },
     ];
   },
-
   getMockDemandData(): DemandData[] {
     return [
-      { month: 'Jan', predicted: 120, actual: 115 },
-      { month: 'Feb', predicted: 135, actual: 140 },
-      { month: 'Mar', predicted: 145, actual: 142 },
-      { month: 'Apr', predicted: 155, actual: 158 },
-      { month: 'May', predicted: 165, actual: 160 },
-      { month: 'Jun', predicted: 170, actual: 175 },
+      { month: "Jan", predicted: 120, actual: 115 },
+      { month: "Feb", predicted: 135, actual: 140 },
+      { month: "Mar", predicted: 145, actual: 142 },
+      { month: "Apr", predicted: 155, actual: 158 },
+      { month: "May", predicted: 165, actual: 160 },
+      { month: "Jun", predicted: 170, actual: 175 },
     ];
   },
-
   getMockRiskEvents(): RiskEvent[] {
     return [
-      { region: 'Region B', severity: 'high', description: 'Activating Backup Supplier in Region B to mitigate disruption' },
+      {
+        region: "Port of Rotterdam",
+        severity: "high",
+        description:
+          "Compare inland alternatives for shipment 402. Extra cost above €200 requires supervisor approval.",
+      },
     ];
   },
 };
 
-// Made with Bob
+export const formatCurrency = (value: number) =>
+  new Intl.NumberFormat("en-IE", {
+    style: "currency",
+    currency: "EUR",
+    maximumFractionDigits: 2,
+  }).format(value);

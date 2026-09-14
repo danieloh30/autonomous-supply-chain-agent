@@ -1,71 +1,160 @@
-import { ProposedAction } from '../services/api';
-import './SupervisorPanel.css';
+import { formatCurrency, ProposedAction } from "../services/api";
+import "./SupervisorPanel.css";
 
 interface SupervisorPanelProps {
   actions: ProposedAction[];
-  onApprove: (id: string) => void;
-  onReject: (id: string) => void;
+  busyId?: string;
+  connection: "connecting" | "online" | "offline";
+  onDecision: (id: string, decision: "approve" | "reject") => Promise<void>;
+  error: string;
+  notice: string;
 }
 
-const SupervisorPanel = ({ actions, onApprove, onReject }: SupervisorPanelProps) => {
-  const pendingActions = actions.filter(a => a.status === 'PENDING');
+const labels = {
+  APPROVED: "Approved",
+  REJECTED: "Rejected",
+  AUTO_APPROVED: "Auto-approved",
+  PENDING: "Pending",
+};
 
-  if (pendingActions.length === 0) {
-    return null;
-  }
+const SupervisorPanel = ({
+  actions,
+  busyId,
+  connection,
+  onDecision,
+  error,
+  notice,
+}: SupervisorPanelProps) => {
+  const pending = actions.filter((action) => action.status === "PENDING");
+  const history = actions.filter((action) => action.status !== "PENDING");
 
   return (
-    <div className="supervisor-panel">
-      <div className="panel-overlay" />
-      <div className="panel-content">
-        <div className="panel-header">
-          <h2>🔔 Supervisor Approval Required</h2>
-          <p>{pendingActions.length} action(s) pending your review</p>
+    <section
+      id="supervisor"
+      className="supervisor-panel"
+      aria-labelledby="supervisor-heading"
+    >
+      <div className="section-heading">
+        <div>
+          <p className="eyebrow">02 / HUMAN OVERSIGHT</p>
+          <h2 id="supervisor-heading">Supervisor queue</h2>
         </div>
-
+        <span className="count-badge">{pending.length}</span>
+      </div>
+      <p className="panel-description">
+        Review the reasoning and additional cost before recording your decision.
+      </p>
+      {error && (
+        <p className="error-banner" role="alert">
+          {error}
+        </p>
+      )}
+      <div role="status" className={notice ? "decision-notice" : ""}>
+        {notice}
+      </div>
+      {pending.length === 0 ? (
+        <div className="empty-state">
+          <span aria-hidden="true">◎</span>
+          <h3>
+            {connection === "connecting"
+              ? "Loading proposals…"
+              : connection === "offline"
+                ? "Queue unavailable"
+                : "No decisions waiting"}
+          </h3>
+          <p>
+            {connection === "online"
+              ? "Run a scenario to see the proposed route and review its cost."
+              : "Connect to the backend to retrieve the current approval queue."}
+          </p>
+        </div>
+      ) : (
         <div className="actions-list">
-          {pendingActions.map((action) => (
-            <div key={action.id} className="action-card">
-              <div className="action-info">
-                <h3>Route Change Proposal</h3>
-                <div className="action-details">
-                  <div className="detail-row">
-                    <span className="label">Route ID:</span>
-                    <span className="value">{action.routeId}</span>
-                  </div>
-                  <div className="detail-row">
-                    <span className="label">Extra Cost:</span>
-                    <span className="value cost">€{action.extraCost.toFixed(2)}</span>
-                  </div>
-                  <div className="detail-row reasoning">
-                    <span className="label">Reasoning:</span>
-                    <span className="value">{action.reasoning}</span>
-                  </div>
-                </div>
+          {pending.map((action) => (
+            <article
+              key={action.id}
+              className="action-card"
+              aria-busy={busyId === action.id}
+            >
+              <div className="action-title">
+                <h3>{action.routeId}</h3>
+                <span className="status-badge pending">Awaiting approval</span>
               </div>
-
+              <dl className="action-details">
+                <div>
+                  <dt>Additional cost</dt>
+                  <dd className="cost">+{formatCurrency(action.extraCost)}</dd>
+                </div>
+                <div>
+                  <dt>Approval threshold</dt>
+                  <dd>&gt; €200</dd>
+                </div>
+              </dl>
+              <p className="action-reasoning">{action.reasoning}</p>
+              <p className="proposal-id">
+                Proposal {action.id.slice(0, 8)} ·{" "}
+                <time dateTime={action.createdAt}>
+                  {new Date(action.createdAt).toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
+                </time>
+              </p>
               <div className="action-buttons">
                 <button
-                  className="btn btn-approve"
-                  onClick={() => onApprove(action.id)}
+                  className="primary-button"
+                  disabled={!!busyId || connection !== "online"}
+                  onClick={() => void onDecision(action.id, "approve")}
+                  aria-label={`Approve ${action.routeId} proposal ${action.id.slice(0, 8)}`}
                 >
-                  ✓ Approve
+                  {busyId === action.id ? "Saving…" : "Approve route"}
                 </button>
                 <button
-                  className="btn btn-reject"
-                  onClick={() => onReject(action.id)}
+                  className="reject-button"
+                  disabled={!!busyId || connection !== "online"}
+                  onClick={() => void onDecision(action.id, "reject")}
+                  aria-label={`Reject ${action.routeId} proposal ${action.id.slice(0, 8)}`}
                 >
-                  ✗ Reject
+                  Reject
                 </button>
               </div>
-            </div>
+            </article>
           ))}
         </div>
+      )}
+      <div className="decision-history">
+        <h3>
+          Decision history <span>{history.length}</span>
+        </h3>
+        {history.length === 0 ? (
+          <p className="helper-text">
+            Approved and rejected proposals will appear here.
+          </p>
+        ) : (
+          <ul>
+            {history.map((action) => (
+              <li key={action.id}>
+                <div>
+                  <strong>{action.routeId}</strong>
+                  <small>
+                    +{formatCurrency(action.extraCost)} ·{" "}
+                    {action.id.slice(0, 8)}
+                  </small>
+                </div>
+                <span className={`status-badge ${action.status.toLowerCase()}`}>
+                  {labels[action.status]}
+                </span>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
-    </div>
+      <p className="policy-note">
+        The server calculates costs from the demo catalog. Your decision is
+        final for each proposal.
+      </p>
+    </section>
   );
 };
 
 export default SupervisorPanel;
-
-// Made with Bob

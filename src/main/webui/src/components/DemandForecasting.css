@@ -63,7 +63,22 @@
 }
 
 .gauge-svg text {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
 /* Made with Bob */
+
+@media (min-width: 650px) {
+  .forecast-content {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(160px, 1fr);
+    align-items: stretch;
+  }
+}
+.chart-section {
+  min-width: 0;
+}
+.forecast-header h3 {
+  color: var(--text-primary);
+  font-size: 1rem;
+}

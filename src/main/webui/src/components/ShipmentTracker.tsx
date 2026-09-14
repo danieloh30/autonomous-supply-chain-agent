@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
-import { api, Shipment } from '../services/api';
-import './ShipmentTracker.css';
+import { useEffect, useState } from "react";
+import { api, Shipment } from "../services/api";
+import "./ShipmentTracker.css";
 
 const ShipmentTracker = () => {
   const [shipments, setShipments] = useState<Shipment[]>([]);
@@ -13,23 +13,29 @@ const ShipmentTracker = () => {
   return (
     <div className="shipment-tracker">
       <div className="tracker-header">
-        <h3>🚢 Route Optimization & Order Fulfillment</h3>
+        <h3>Shipment snapshot</h3>
         <p className="tracker-subtitle">
-          Agent optimastes to finiliser if an order shipments.
+          Illustrative shipments in the demo network. Approval decisions do not
+          update these sample records.
         </p>
       </div>
 
       <div className="live-shipments">
-        <h4>Live Shipments</h4>
+        <h4>Sample shipments</h4>
         <div className="shipment-list">
           {shipments.map((shipment) => (
-            <div key={shipment.id} className={`shipment-item ${shipment.alert ? 'has-alert' : ''}`}>
+            <div
+              key={shipment.id}
+              className={`shipment-item ${shipment.alert ? "has-alert" : ""}`}
+            >
               <div className="shipment-icon">🚢</div>
               <div className="shipment-info">
                 <div className="shipment-name">{shipment.name}</div>
                 <div className="shipment-details">
                   <span className="badge">{shipment.status}</span>
-                  {shipment.mode && <span className="badge mode">{shipment.mode}</span>}
+                  {shipment.mode && (
+                    <span className="badge mode">{shipment.mode}</span>
+                  )}
                 </div>
                 {shipment.alert && (
                   <div className="shipment-alert">

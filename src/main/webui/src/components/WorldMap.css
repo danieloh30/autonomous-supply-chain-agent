@@ -1,6 +1,8 @@
 .world-map {
   width: 100%;
-  height: 500px;
+  height: auto;
+  aspect-ratio: 2 / 1;
+  min-height: 220px;
   position: relative;
 }
 
@@ -46,7 +48,8 @@
 
 .marker {
   transition: all 0.3s;
-  cursor: pointer;
+  transform-box: fill-box;
+  transform-origin: center;
 }
 
 .marker:hover {
@@ -79,7 +82,8 @@
 }
 
 @keyframes pulse-marker {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 1;
     transform: scale(1);
   }
@@ -101,8 +105,13 @@
 }
 
 @keyframes blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.3; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
 }
 
 .action-box {
@@ -119,7 +128,7 @@
 .action-text {
   fill: var(--text-primary);
   font-size: 11px;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
 /* Made with Bob */

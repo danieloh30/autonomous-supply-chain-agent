@@ -1,9 +1,14 @@
-import './WorldMap.css';
+import "./WorldMap.css";
 
 const WorldMap = () => {
   return (
     <div className="world-map">
-      <svg viewBox="0 0 1400 700" className="map-svg">
+      <svg
+        viewBox="0 0 1400 700"
+        className="map-svg"
+        role="img"
+        aria-label="Schematic sample supply network with regular, disrupted, and alternative routes"
+      >
         {/* Simplified world map outline */}
         <g className="continents">
           {/* North America */}
@@ -46,21 +51,21 @@ const WorldMap = () => {
             className="route route-active"
             strokeDasharray="5,5"
           />
-          
+
           {/* Route 2: Europe to Asia */}
           <path
             d="M 700 180 Q 850 160 950 200"
             className="route route-active"
             strokeDasharray="5,5"
           />
-          
+
           {/* Route 3: Asia to Australia (with issue) */}
           <path
             d="M 1000 300 Q 1050 380 1100 480"
             className="route route-warning"
             strokeDasharray="5,5"
           />
-          
+
           {/* Alternative route (green) */}
           <path
             d="M 950 280 Q 1020 350 1080 460"
@@ -75,35 +80,63 @@ const WorldMap = () => {
           <circle cx="280" cy="200" r="8" className="marker factory" />
           <circle cx="420" cy="340" r="8" className="marker factory" />
           <circle cx="550" cy="340" r="8" className="marker factory" />
-          
+
           {/* Warehouses */}
           <circle cx="620" cy="180" r="8" className="marker warehouse" />
           <circle cx="800" cy="180" r="8" className="marker warehouse" />
           <circle cx="950" cy="200" r="8" className="marker warehouse" />
-          
+
           {/* Ports */}
           <circle cx="490" cy="240" r="8" className="marker port" />
           <circle cx="700" cy="280" r="8" className="marker port" />
           <circle cx="1100" cy="380" r="8" className="marker port" />
-          
+
           {/* Issue location */}
           <circle cx="920" cy="360" r="12" className="marker issue" />
-          <text x="920" y="340" className="marker-label alert">⚠</text>
+          <text x="920" y="340" className="marker-label alert">
+            ⚠
+          </text>
         </g>
 
         {/* Agent actions */}
         <g className="agent-actions">
           {/* Rebalancing stock action */}
-          <rect x="520" y="380" width="180" height="60" className="action-box" rx="5" />
-          <text x="530" y="400" className="action-text">Agent Action:</text>
-          <text x="530" y="420" className="action-text">Rebalancing Stock to</text>
-          <text x="530" y="435" className="action-text">meet surge demand</text>
-          
+          <rect
+            x="520"
+            y="380"
+            width="180"
+            height="60"
+            className="action-box"
+            rx="5"
+          />
+          <text x="530" y="400" className="action-text">
+            Example response:
+          </text>
+          <text x="530" y="420" className="action-text">
+            Rebalance stock to
+          </text>
+          <text x="530" y="435" className="action-text">
+            meet surge demand
+          </text>
+
           {/* Rerouting action */}
-          <rect x="880" y="460" width="200" height="60" className="action-box success" rx="5" />
-          <text x="890" y="480" className="action-text">Agent Action:</text>
-          <text x="890" y="500" className="action-text">Rerouting via Air Freight</text>
-          <text x="890" y="515" className="action-text">for on-time delivery.</text>
+          <rect
+            x="880"
+            y="460"
+            width="200"
+            height="60"
+            className="action-box success"
+            rx="5"
+          />
+          <text x="890" y="480" className="action-text">
+            Example response:
+          </text>
+          <text x="890" y="500" className="action-text">
+            Evaluate an alternative
+          </text>
+          <text x="890" y="515" className="action-text">
+            for on-time delivery.
+          </text>
         </g>
       </svg>
     </div>

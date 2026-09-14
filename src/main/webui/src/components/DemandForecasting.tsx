@@ -1,11 +1,20 @@
-import { useEffect, useState } from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { api, DemandData } from '../services/api';
-import './DemandForecasting.css';
+import { useEffect, useState } from "react";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
+import { api, DemandData } from "../services/api";
+import "./DemandForecasting.css";
 
 const DemandForecasting = () => {
   const [demandData, setDemandData] = useState<DemandData[]>([]);
-  const [inventoryHealth, setInventoryHealth] = useState(75);
+  const inventoryHealth = 75;
 
   useEffect(() => {
     setDemandData(api.getMockDemandData());
@@ -14,35 +23,38 @@ const DemandForecasting = () => {
   return (
     <div className="demand-forecasting">
       <div className="forecast-header">
-        <h3>📊 Demand Forecasting & Inventory Optimization</h3>
+        <h3>Demand & inventory</h3>
         <p className="forecast-subtitle">
-          Demand forecasting &A Inventory optimization nvealizes demand corsemsines and inventory health.
+          Sample demand trends and inventory coverage for the demo network.
         </p>
       </div>
 
       <div className="forecast-content">
         <div className="chart-section">
-          <h4>Predicted Demand vs. Actual</h4>
-          <ResponsiveContainer width="100%" height={200}>
-            <LineChart data={demandData}>
+          <h4>Predicted vs. actual demand (units)</h4>
+          <ResponsiveContainer width="100%" height={220}>
+            <LineChart data={demandData} accessibilityLayer>
               <CartesianGrid strokeDasharray="3 3" stroke="#444" />
               <XAxis dataKey="month" stroke="#aaa" />
               <YAxis stroke="#aaa" />
-              <Tooltip 
-                contentStyle={{ backgroundColor: '#1a1a2e', border: '1px solid #444' }}
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: "#1a1a2e",
+                  border: "1px solid #444",
+                }}
               />
               <Legend />
-              <Line 
-                type="monotone" 
-                dataKey="predicted" 
-                stroke="#8884d8" 
+              <Line
+                type="monotone"
+                dataKey="predicted"
+                stroke="#8884d8"
                 strokeWidth={2}
                 name="Predicted"
               />
-              <Line 
-                type="monotone" 
-                dataKey="actual" 
-                stroke="#82ca9d" 
+              <Line
+                type="monotone"
+                dataKey="actual"
+                stroke="#82ca9d"
                 strokeWidth={2}
                 name="Actual"
               />
@@ -53,9 +65,20 @@ const DemandForecasting = () => {
         <div className="inventory-section">
           <h4>Inventory Health</h4>
           <div className="inventory-gauge">
-            <svg viewBox="0 0 200 120" className="gauge-svg">
+            <svg
+              viewBox="0 0 200 120"
+              className="gauge-svg"
+              role="img"
+              aria-label="Sample inventory health: 75 percent"
+            >
               <defs>
-                <linearGradient id="gaugeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                <linearGradient
+                  id="gaugeGradient"
+                  x1="0%"
+                  y1="0%"
+                  x2="100%"
+                  y2="0%"
+                >
                   <stop offset="0%" stopColor="#ff6b6b" />
                   <stop offset="50%" stopColor="#ffd93d" />
                   <stop offset="100%" stopColor="#6bcf7f" />
@@ -80,13 +103,20 @@ const DemandForecasting = () => {
               <line
                 x1="100"
                 y1="100"
-                x2={100 + 60 * Math.cos((Math.PI * (inventoryHealth / 100 - 0.5)))}
-                y2={100 - 60 * Math.sin((Math.PI * (inventoryHealth / 100 - 0.5)))}
+                x2={100 - 60 * Math.cos((Math.PI * inventoryHealth) / 100)}
+                y2={100 - 60 * Math.sin((Math.PI * inventoryHealth) / 100)}
                 stroke="#fff"
                 strokeWidth="3"
               />
               <circle cx="100" cy="100" r="5" fill="#fff" />
-              <text x="100" y="115" textAnchor="middle" fill="#fff" fontSize="20" fontWeight="bold">
+              <text
+                x="100"
+                y="115"
+                textAnchor="middle"
+                fill="#fff"
+                fontSize="20"
+                fontWeight="bold"
+              >
                 {inventoryHealth}%
               </text>
             </svg>

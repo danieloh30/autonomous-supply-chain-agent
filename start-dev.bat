@@ -1,4 +1,5 @@
 @echo off
+cd /d "%~dp0"
 REM Autonomous Supply Chain Agent - Development Startup Script (Windows)
 REM This script starts both the Quarkus backend and React frontend
 
@@ -9,16 +10,14 @@ echo.
 echo Starting Quarkus backend...
 start "Quarkus Backend" cmd /k "mvnw.cmd quarkus:dev"
 
-echo Waiting for Quarkus to start...
-timeout /t 10 /nobreak >nul
 
 echo Starting React frontend...
 cd src\main\webui
-start "React Frontend" cmd /k "npm install && npm run dev"
+start "React Frontend" cmd /k "npm ci && npm run dev"
 cd ..\..\..
 
 echo.
-echo Services started successfully!
+echo Services are starting. Check both terminal windows for readiness or errors.
 echo.
 echo Backend:  http://localhost:8080
 echo Frontend: http://localhost:3000

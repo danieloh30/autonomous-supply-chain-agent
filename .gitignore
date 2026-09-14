@@ -43,3 +43,9 @@ nb-configuration.xml
 /.quarkus/cli/plugins/
 # TLS Certificates
 .certs/
+
+# Frontend dependencies and generated assets
+node_modules/
+src/main/webui/dist/
+src/main/resources/META-INF/resources/
+*.tsbuildinfo

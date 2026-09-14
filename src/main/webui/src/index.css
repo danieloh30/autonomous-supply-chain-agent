@@ -1,42 +1,79 @@
 :root {
-  --bg-primary: #0a0e27;
-  --bg-secondary: #1a1a2e;
-  --bg-tertiary: #16213e;
-  --text-primary: #ffffff;
-  --text-secondary: #b8b8b8;
-  --accent-blue: #4a9eff;
-  --accent-green: #6bcf7f;
-  --accent-yellow: #ffd93d;
-  --accent-red: #ff6b6b;
-  --border-color: #2d3561;
+  font-family:
+    Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+  color-scheme: dark;
+  --bg-primary: #0b1220;
+  --bg-secondary: #111c2e;
+  --bg-tertiary: #152338;
+  --text-primary: #f0f5fc;
+  --text-secondary: #a7b7cc;
+  --accent-blue: #85b9ff;
+  --accent-green: #70dfbb;
+  --accent-yellow: #f7cf7d;
+  --accent-red: #ff9a9a;
+  --border-color: #2a3a51;
 }
-
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
-
 body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  background-color: var(--bg-primary);
+  min-width: 320px;
+  background: var(--bg-primary);
   color: var(--text-primary);
-  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
 }
-
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+button,
+textarea {
+  font: inherit;
 }
-
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+button {
+  cursor: pointer;
+}
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+a {
+  color: var(--accent-blue);
+}
+button:focus-visible,
+a:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid var(--accent-blue);
+  outline-offset: 4px;
+}
+button {
+  transition:
+    background 0.15s,
+    border-color 0.15s;
+}
+p {
+  line-height: 1.6;
+}
+h1,
+h2,
+h3 {
+  line-height: 1.3;
+}
 #root {
-  width: 100%;
   min-height: 100vh;
 }
-
-/* Made with Bob */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
